@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header h1{
+    display: flex;
+    justify-content: center;
+}
+
+a{
+    text-decoration: none;
+}
+
+body{
+    /* display: flex; */
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background-color: rgb(250, 249, 246);
+}
+
+input[type="date"],input[type="text"],input[type="email"], input[type="password"]{
+    color: #757575;
+    font-family: "Poppins",sans-serif;
+    border: none;
+    outline-color: black;
+    background: rgba(182, 180, 180, 0.3);
+    padding: 1rem 1.5rem;
+    padding-left: calc(1rem*3.5);
+    border-radius: 8px;
+    width: 100%;
+    transition: background .5s;
+    margin-bottom: 10px;
+}
+
+.custom-selector{    
+    color: #757575;
+    font-family: "Poppins",sans-serif;
+    border: none;
+    outline-color: black;
+    background: rgba(182, 180, 180, 0.3);
+    padding: 1rem 1.5rem;
+    padding-left: calc(1rem*3.5);
+    border-radius: 8px;
+    width: 100%;
+    transition: background .5s;
+    margin-bottom: 10px;
+    -webkit-appearance: none; /* Safari */
+    appearance: none;
+}
+
+form{
+    width: 100%;
+    max-width: 500px ;
+}
+
+/* .container{
+    margin: auto;
+    width: 30%;
+    justify-content: center;
+} */
+.form-item{
+    position: relative;
+}
+
+.form-item .form-item-icon{
+    position: absolute;
+    top: .82rem;
+    left: 1.4rem;
+    font-size: 1.3rem;
+    opacity: .4;
+}
+.checkbox{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.checkbox input{
+    accent-color: black;
+}
+.form-item-other{
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.form-item-other a{
+    color: #407bfe;
+}
+.login-btn, .signup-btn{
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border: none;
+    padding: 1rem 1.5rem;
+    padding-left: auto;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: 600;
+    background-color: black;
+    text-decoration: none;
+    text-align: center;
+    justify-content: center;
+    color: white;
+}
+.login-card-footer a{
+    color: #407bfe;
+}
+
+.onboarding-img{
+    max-height: 400px;
+}
