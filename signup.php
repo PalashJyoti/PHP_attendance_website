@@ -1,75 +1,34 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once "config.php";
 
-$email = $password = $confirm_password = "";
-$email_err = $password_err = $confirm_password_err = "";
-
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-  // check if username is empty
-  if (empty(trim($_POST["email"]))) {
-    $email_err = "Please enter a username.";
-  } else {
-    $sql = "SELECT id FROM users WHERE email=?";
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-      mysqli_stmt_bind_param($stmt, "s", $param_email);
-
-      // set the value of param email
-      $param_email = trim($_POST['email']);
-
-      // try to execute this statement
-      if (mysqli_stmt_execute($stmt)) {
-        mysqli_stmt_store_result($stmt);
-        if (mysqli_stmt_num_rows($stmt) == 1) {
-          $email_err = "email already exist";
-        } else {
-          $email = trim($_POST['email']);
-        }
-      } else {
-        echo "Something went wrong";
-      }
-    }
-  }
-  mysqli_stmt_close($stmt);
-
-  // check for password
-  if (empty(trim($_POST['password']))) {
-    $password_err = "Password cannot be blank";
-  } elseif (strlen(trim($_POST['password'])) < 8) {
-    $password_err = 'Password must have atleast 8 characters';
-  } else {
-    $password = trim($_POST['password']);
-  }
-
-  // check for cofirm password
-  if (trim($_POST['password']) != trim($_POST['confirm_password'])) {
-    $confirm_password_err = "Password should mattch";
-  }
-
-  // if there were no error insert into database
-  if (empty($email_err) && empty($password_err) && empty($confirm_password_err)) {
-    $sql = "INSERT INTO users (email,password) VALUES (?,?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    if ($stmt) {
-      mysqli_stmt_bind_param($stmt, "ss", $param_email, $param_password);
-
-      // set these parameters
-      $param_email = $email;
-      $param_password = password_hash($password, PASSWORD_DEFAULT);
-
-      // try to execute the query
-      if (mysqli_stmt_execute($stmt)) {
-        header("location: login.php");
-      } else {
-        echo "Something went wrong cannot redirect";
-      }
-    }
-    mysqli_stmt_close($stmt);
-  }
-  mysqli_close($conn);
+function sanitize($data)
+{
+  global $conn;
+  return mysqli_real_escape_string($conn, $data);
 }
-?>
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $name = sanitize($_POST["name"]);
+  $enrolmentId = sanitize($_POST["enrolmentId"]);
+  $course = sanitize($_POST["course"]);
+  $semester = sanitize($_POST["semester"]);
+  $dob = sanitize($_POST["dob"]);
+  $email = sanitize($_POST["email"]);
+  $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash the password
+
+  $sql = "INSERT INTO users (enrolmentId, name, course, semester, dob, email, password) 
+          VALUES ('$enrolmentId', '$name', '$course', '$semester', '$dob', '$email', '$password')";
+
+  if ($conn->query($sql) === false) {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+  }
+}
+
+$conn->close();
+?>
 
 
 
@@ -94,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     </div>
     <div class="col d-flex flex-column justify-content-center
       align-items-center text-center"">
-      <form action="" method=" post">
+      <form action=" <?php echo $_SERVER['PHP_SELF']; ?>" method="post">
       <div class="form-item">
         <span class="form-item-icon material-symbols-rounded">person</span>
         <input type="text" name="name" id="name" placeholder="Enter Name" required autofocus />
@@ -119,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
       </div>
       <div class="form-item">
         <span class="form-item-icon material-symbols-rounded">book</span>
-        <input type="date" name="dob" id="dob" placeholder="Enter DOB" required autofocus />
+        <input type="date" name="dob" id="dob" placeholder="Enter DOB" required />
       </div>
       <div class="form-item">
         <span class="form-item-icon material-symbols-rounded">mail</span>
@@ -127,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
       </div>
       <div class="form-item">
         <span class="form-item-icon material-symbols-rounded">lock</span>
-        <input type="text" name="password" id="password" placeholder="Enter Password" required />
+        <input type="password" name="password" id="password" placeholder="Enter Password" required />
       </div>
       <div class="form-item">
         <span class="form-item-icon material-symbols-rounded">lock</span>

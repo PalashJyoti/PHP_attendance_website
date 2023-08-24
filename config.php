@@ -1,13 +1,13 @@
 <?php
-    define('DB_SERVER','localhost');
-    define('DB_USERNAME','root');
-    define('DB_PASSWORD', '');
-    define('DB_NAME','attendance');
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "attendance";
 
-    // try connecting to the database
-    $conn=mysqli_connect(DB_SERVER,DB_USERNAME,DB_PASSWORD,DB_NAME);
+// try connecting to the database
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    // check the connection
-    if($conn==false){
-        die('ERROR: Cannot connect to the database');
-    }
+// check the connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
