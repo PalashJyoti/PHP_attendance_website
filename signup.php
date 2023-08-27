@@ -1,33 +1,65 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+require('config.php');
 
-require_once "config.php";
-
-function sanitize($data)
-{
-  global $conn;
-  return mysqli_real_escape_string($conn, $data);
+session_start();
+if(isset($_SESSION['loggedin']) && $_SESSION['loggedin']==true){
+  header("location: index.php");
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $name = sanitize($_POST["name"]);
-  $enrolmentId = sanitize($_POST["enrolmentId"]);
-  $course = sanitize($_POST["course"]);
-  $semester = sanitize($_POST["semester"]);
-  $dob = sanitize($_POST["dob"]);
-  $email = sanitize($_POST["email"]);
-  $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash the password
+if(isset($_POST['register'])){
+  $name=$_POST['name'];
+  $enrolmentId=$_POST['enrolmentId'];
+  $course=$_POST['course'];
+  $semester=$_POST['semester'];
+  $dob=$_POST['dob'];
+  $email=$_POST['email'];
+  $password=password_hash($_POST['password'],PASSWORD_BCRYPT);
 
-  $sql = "INSERT INTO users (enrolmentId, name, course, semester, dob, email, password) 
-          VALUES ('$enrolmentId', '$name', '$course', '$semester', '$dob', '$email', '$password')";
+  $user_exist_query="SELECT * FROM `users` WHERE `enrolmentId`='$enrolmentId' OR `email`='$email'";
+  $result=mysqli_query($conn,$user_exist_query);
 
-  if ($conn->query($sql) === false) {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+  if($result){
+    if(mysqli_num_rows($result)>0){
+      $result_fetch=mysqli_fetch_assoc($result);
+      if($result_fetch['enrolmentId']==$enrolmentId){
+        echo"
+        <script>
+        alert('Enrolment Id already exist');
+        </script>
+        ";
+      }else{
+        echo"
+        <script>
+        alert('$result_fetch[email] - email already registered');
+        </script>
+        ";
+      }
+    }
+    else{
+      $query="INSERT INTO `users`(`name`, `enrolmentId`, `course`, `semester`, `dob`, `email`, `password`) VALUES ('$name','$enrolmentId','$course','$semester','$dob','$email','$password')";
+      if(mysqli_query($conn,$query)){
+        echo"
+        <script>
+        alert('Registration Successful');
+        </script>
+        ";
+      }
+      else{
+        echo"
+        <script>
+        alert('cannot run query');
+        </script>
+        ";
+      }
+    }
+  }else{
+    echo"
+      <script>
+        alert('cannot run query');
+      </script>
+    ";
   }
 }
-
-$conn->close();
 ?>
 
 
@@ -92,11 +124,11 @@ $conn->close();
         <span class="form-item-icon material-symbols-rounded">lock</span>
         <input type="password" name="confirm_password" id="confirmPassword" placeholder="Confirm Password" required />
       </div>
-      <button class="signup-btn" type="submit">Sign Up</button>
+      <button class="signup-btn" name="register" type="submit">Sign Up</button>
       </form>
       <div class="login-card-footer">
         Already have an account?
-        <a href="login.html">Login</a>
+        <a href="login.php">Login</a>
       </div>
   </main>
 </body>
